@@ -47,6 +47,9 @@ footer { align-items: center; background: var(--lime); display: flex; justify-co
 .lv-nav-scrolled .lv-nav-links a, .lv-nav-scrolled .lv-nav-actions > a:first-child { color: #52647c; }
 .lv-nav-scrolled .lv-nav-links a:hover, .lv-nav-scrolled .lv-nav-actions > a:first-child:hover { color: var(--lv-teal); }
 .lv-nav-scrolled .lv-button-small { color: #fff; }
+.lv-nav { position: relative; }
+.lv-nav-menu { display: contents; }
+.lv-menu-toggle { display: none; }
 .lv-footer-grid > div > a, .lv-footer-grid > div > span { font-size: 13px; }
 .lv-footer-grid > div > p { font-size: 13px; }
 .lv-footer h3 { font-size: 14px; }
@@ -60,6 +63,38 @@ footer { align-items: center; background: var(--lime); display: flex; justify-co
 	.lv-nav-scrolled { padding-left: 7vw; padding-right: 7vw; }
 	.lv-footer-grid > div > a, .lv-footer-grid > div > span { font-size: 12px; }
 	.lv-footer-grid > div > p { font-size: 12px; }
+}
+
+@media (max-width: 800px) {
+	.lv-hero { min-height: auto; padding-bottom: 104px; }
+	.lv-hero-actions { gap: 9px; margin-top: 30px; }
+	.lv-button, .lv-ghost-button { font-size: 12px; padding: 13px 16px; }
+	.lv-button span, .lv-ghost-button span { font-size: 15px; }
+	.lv-stats { margin-top: 50px; padding-top: 25px; }
+	.lv-process-grid { gap: 14px; }
+	.lv-process-grid article { min-height: 175px; padding: 21px; }
+	.lv-process-grid article > b { font-size: 42px; right: 15px; top: 12px; }
+	.lv-step-icon { font-size: 19px; height: 38px; width: 38px; }
+	.lv-process-grid h3 { font-size: 15px; margin-top: 23px; }
+	.lv-process-grid p { font-size: 11px; }
+	.lv-menu-toggle { background: transparent; border: 0; color: #fff; cursor: pointer; display: block; font-size: 27px; line-height: 1; padding: 5px 0 5px 10px; }
+	.lv-nav { justify-content: flex-start; padding-right: 8px; z-index: 5; }
+	.lv-brand { min-width: 0; overflow: hidden; position: relative; z-index: 6; }
+	.lv-brand > span:last-child { overflow: hidden; text-overflow: ellipsis; }
+	.lv-menu-toggle { flex: 0 0 auto; margin-left: auto; position: relative; z-index: 6; }
+	.lv-nav-menu { background: rgba(15,25,45,.98); display: none; inset: 0; overflow-y: auto; overscroll-behavior: contain; padding: 92px 24px 32px; position: fixed; z-index: 4; }
+	.lv-nav-menu.is-open { display: block; }
+	.lv-nav-menu .lv-nav-links { align-items: stretch; display: flex; flex-direction: column; gap: 0; margin: 0; }
+	.lv-nav-menu .lv-nav-links a { border-bottom: 1px solid rgba(174,187,208,.18); color: #dbe4f0; font-size: 14px; padding: 13px 0; }
+	.lv-nav-menu .lv-nav-actions { align-items: stretch; flex-direction: column; gap: 15px; margin-top: 18px; }
+	.lv-nav-menu .lv-nav-actions > a:first-child { color: #dbe4f0; font-size: 14px; }
+	.lv-nav-menu .lv-button-small { width: 100%; }
+	.lv-nav-scrolled .lv-menu-toggle { color: var(--lv-ink); }
+	.lv-nav-scrolled .lv-nav-menu { background: #fff; box-shadow: 0 8px 25px rgba(15,25,45,.1); }
+	.lv-nav-scrolled .lv-nav-menu .lv-nav-links a, .lv-nav-scrolled .lv-nav-menu .lv-nav-actions > a:first-child { color: #52647c; }
+	.lv-hero-copy { min-width: 0; width: 100%; }
+	.lv-hero h1 strong { display: block; font-size: .86em; max-width: 100%; overflow-wrap: anywhere; }
+	.lv-notice { bottom: 15px; left: auto; position: fixed; right: 12px; width: min(290px, calc(100vw - 24px)); z-index: 3; }
 }
 
 /* Dashboard */

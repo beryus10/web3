@@ -84,6 +84,7 @@ export default function Home() {
   const [noticeIndex, setNoticeIndex] = useState(0);
   const [noticeVisible, setNoticeVisible] = useState(true);
   const [isScrolled, setIsScrolled] = useState(false);
+  const [isNavOpen, setIsNavOpen] = useState(false);
 
   useEffect(() => {
     if (!noticeVisible) return;
@@ -99,6 +100,13 @@ export default function Home() {
     window.addEventListener("scroll", handleScroll, { passive: true });
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
+
+  useEffect(() => {
+    document.body.style.overflow = isNavOpen ? "hidden" : "";
+    return () => {
+      document.body.style.overflow = "";
+    };
+  }, [isNavOpen]);
 
   const [noticeText, noticeAmount] = activityNotices[noticeIndex];
 
@@ -116,22 +124,50 @@ export default function Home() {
               </span>
               <span>alphainfortrading</span>
             </Link>
-            <div className="lv-nav-links">
-              <a href="#about">About</a>
-              <a href="#services">Services</a>
-              <a href="#plans">Plans</a>
-              <a href="#faq">FAQ</a>
-              <a href="#contact">Contact</a>
+            <div
+              className={`lv-nav-menu ${isNavOpen ? "is-open" : ""}`}
+              id="mobile-navigation"
+            >
+              <div className="lv-nav-links">
+                <a href="#about" onClick={() => setIsNavOpen(false)}>
+                  About
+                </a>
+                <a href="#services" onClick={() => setIsNavOpen(false)}>
+                  Services
+                </a>
+                <a href="#plans" onClick={() => setIsNavOpen(false)}>
+                  Plans
+                </a>
+                <a href="#faq" onClick={() => setIsNavOpen(false)}>
+                  FAQ
+                </a>
+                <a href="#contact" onClick={() => setIsNavOpen(false)}>
+                  Contact
+                </a>
+              </div>
+              <div className="lv-nav-actions">
+                <Link href="/login" onClick={() => setIsNavOpen(false)}>
+                  Login
+                </Link>
+                <Link
+                  className="lv-button lv-button-small"
+                  href="/login?mode=signup"
+                  onClick={() => setIsNavOpen(false)}
+                >
+                  Get started <span>↗</span>
+                </Link>
+              </div>
             </div>
-            <div className="lv-nav-actions">
-              <Link href="/login">Login</Link>
-              <Link
-                className="lv-button lv-button-small"
-                href="/login?mode=signup"
-              >
-                Get started <span>↗</span>
-              </Link>
-            </div>
+            <button
+              aria-controls="mobile-navigation"
+              aria-expanded={isNavOpen}
+              aria-label={isNavOpen ? "Close navigation" : "Open navigation"}
+              className="lv-menu-toggle"
+              onClick={() => setIsNavOpen((open) => !open)}
+              type="button"
+            >
+              {isNavOpen ? "×" : "☰"}
+            </button>
           </nav>
           <div className="lv-hero-copy" id="about">
             <p className="lv-kicker">

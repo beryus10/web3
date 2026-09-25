@@ -18,6 +18,30 @@ Open [http://localhost:3000](http://localhost:3000) with your browser to see the
 
 You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
 
+## Supabase setup
+
+The authentication and account workflows use Supabase Auth and Postgres.
+
+1. Keep these values in `.env.local`:
+
+```env
+NEXT_PUBLIC_SUPABASE_URL=your-project-url
+NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY=your-publishable-key
+```
+
+2. In the Supabase SQL Editor, run [`supabase/schema.sql`](supabase/schema.sql). If the schema was already installed, run [`supabase/add-withdrawal-requests.sql`](supabase/add-withdrawal-requests.sql), [`supabase/review-withdrawals.sql`](supabase/review-withdrawals.sql), and [`supabase/fix-duplicate-deposits.sql`](supabase/fix-duplicate-deposits.sql).
+	If you already ran an earlier version, also run `alter table public.profiles add column if not exists phone text not null default '';`.
+3. Create an account through `/login?mode=signup`.
+4. Promote the first admin from the Supabase SQL Editor:
+
+```sql
+update public.profiles
+set role = 'admin'
+where email = 'admin@example.com';
+```
+
+Admins sign in at `/console/admin/login`. They can review pending deposits and adjust user balances. Client deposits remain pending until an admin approves them.
+
 This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
 
 ## Learn More

@@ -1,17 +1,51 @@
 "use client";
 
-import { Suspense, useState } from "react";
+import { FormEvent, Suspense, useState } from "react";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
+import { createClient } from "@/lib/supabase/client";
 
 function LoginContent() {
   const [signupOverride, setSignupOverride] = useState<boolean | null>(null);
+  const [name, setName] = useState("");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [error, setError] = useState("");
+  const [message, setMessage] = useState("");
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const router = useRouter();
   const searchParams = useSearchParams();
+  const supabase = createClient();
   const isSignup = signupOverride ?? searchParams.get("mode") === "signup";
 
-  const handleSubmit = () => {
-    if (isSignup) router.push("/dashboard");
+  const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    setError("");
+    setMessage("");
+    setIsSubmitting(true);
+
+    const result = isSignup
+      ? await supabase.auth.signUp({
+          email,
+          password,
+          options: { data: { full_name: name } },
+        })
+      : await supabase.auth.signInWithPassword({ email, password });
+
+    setIsSubmitting(false);
+
+    if (result.error) {
+      setError(result.error.message);
+      return;
+    }
+
+    if (isSignup && !result.data.session) {
+      setMessage("Check your email to confirm your account, then log in.");
+      return;
+    }
+
+    router.push("/dashboard");
+    router.refresh();
   };
 
   return (
@@ -53,45 +87,59 @@ function LoginContent() {
               {isSignup ? "Log in" : "Create an account"}
             </button>
           </p>
-          {isSignup && (
-            <>
-              <label className="field-label" htmlFor="name">
-                Your name
-              </label>
-              <input
-                className="auth-input"
-                id="name"
-                type="text"
-                placeholder="Brian Jordan Ellis"
-              />
-            </>
-          )}
-          <label className="field-label" htmlFor="email">
-            Email address
-          </label>
-          <input
-            className="auth-input"
-            id="email"
-            type="email"
-            placeholder="you@example.com"
-          />
-          <label className="field-label" htmlFor="password">
-            Password
-          </label>
-          <input
-            className="auth-input"
-            id="password"
-            type="password"
-            placeholder="8+ characters"
-          />
-          <button className="auth-submit" onClick={handleSubmit} type="button">
-            {isSignup ? "Create account  ↗" : "Log in  ↗"}
-          </button>
-          <p className="terms">
-            By continuing, you agree to alphainfortrading&apos;s{" "}
-            <a href="#terms">Terms</a> and <a href="#privacy">Privacy Policy</a>
-            .
-          </p>
+          <form onSubmit={handleSubmit}>
+            {isSignup && (
+              <>
+                <label className="field-label" htmlFor="name">
+                  Your name
+                </label>
+                <input
+                  className="auth-input"
+                  id="name"
+                  onChange={(event) => setName(event.target.value)}
+                  placeholder="Brian Jordan Ellis"
+                  required
+                  type="text"
+                  value={name}
+                />
+              </>
+            )}
+            <label className="field-label" htmlFor="email">
+              Email address
+            </label>
+            <input
+              className="auth-input"
+              id="email"
+              onChange={(event) => setEmail(event.target.value)}
+              placeholder="you@example.com"
+              required
+              type="email"
+              value={email}
+            />
+            <label className="field-label" htmlFor="password">
+              Password
+            </label>
+            <input
+              className="auth-input"
+              id="password"
+              minLength={8}
+              onChange={(event) => setPassword(event.target.value)}
+              placeholder="8+ characters"
+              required
+              type="password"
+              value={password}
+            />
+            {error && <p className="auth-error" role="alert">{error}</p>}
+            {message && <p className="auth-message" role="status">{message}</p>}
+            <button className="auth-submit" disabled={isSubmitting} type="submit">
+              {isSubmitting ? "Working..." : isSignup ? "Create account  ↗" : "Log in  ↗"}
+            </button>
+            <p className="terms">
+              By continuing, you agree to alphainfortrading&apos;s{" "}
+              <a href="#terms">Terms</a> and <a href="#privacy">Privacy Policy</a>
+              .
+            </p>
+          </form>
         </div>
       </section>
     </main>

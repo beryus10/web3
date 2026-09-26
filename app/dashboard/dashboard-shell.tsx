@@ -2,52 +2,16 @@
 
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
 import { createClient } from "@/lib/supabase/client";
-import type { Profile } from "@/lib/supabase/types";
+import { useDashboardProfileContext } from "./dashboard-context";
+import { LanguageSelector } from "./language-selector";
 
 export type DashboardNav = "dashboard" | "fund" | "withdraw" | "history" | "profile";
 
 const supabase = createClient();
 
 export function useDashboardProfile() {
-  const [profile, setProfile] = useState<Profile | null>(null);
-
-  useEffect(() => {
-    let active = true;
-
-    async function loadProfile() {
-      const { data: userData } = await supabase.auth.getUser();
-      if (!userData.user) return;
-
-      const { data } = await supabase
-        .from("profiles")
-        .select("*")
-        .eq("id", userData.user.id)
-        .single();
-
-      if (!active) return;
-
-      setProfile(data || {
-        id: userData.user.id,
-        email: userData.user.email || "",
-        full_name: userData.user.user_metadata.full_name || "Your account",
-        phone: userData.user.user_metadata.phone || "",
-        role: "user",
-        balance: 0,
-        active_investment: 0,
-        total_earnings: 0,
-        created_at: userData.user.created_at,
-      });
-    }
-
-    void loadProfile();
-    return () => {
-      active = false;
-    };
-  }, []);
-
-  return profile;
+  return useDashboardProfileContext().profile;
 }
 
 const navigation: { id: DashboardNav; label: string; href: string; icon: string }[] = [
@@ -75,7 +39,17 @@ export function DashboardShell({ active, children }: { active: DashboardNav; chi
         </nav>
         <button className="dashboard-logout" onClick={async () => { await supabase.auth.signOut(); router.push("/login"); }} type="button"><span>↪</span>Log out</button>
       </aside>
-      <header className="dashboard-topbar"><span>Welcome back, <b>{profile?.full_name || "there"}</b></span><span className="dashboard-avatar">{initials}</span></header>
+      <header className="dashboard-topbar">
+        <Link className="dashboard-mobile-brand" href="/">
+          <span className="dashboard-brand-mark">↗</span>
+          <span>alphainfortrading</span>
+        </Link>
+        <div className="dashboard-topbar-content">
+          <span className="dashboard-topbar-welcome">Welcome back, <b>{profile?.full_name || "there"}</b></span>
+          <LanguageSelector />
+          <span className="dashboard-avatar">{initials}</span>
+        </div>
+      </header>
       <section className="dashboard-main">{children}</section>
       <nav className="dashboard-mobile-dock" aria-label="Dashboard navigation">{navigation.map((item) => <Link className={active === item.id ? "active" : ""} href={item.href} key={item.id} aria-label={item.label}><span>{item.icon}</span></Link>)}</nav>
     </main>
@@ -89,7 +63,7 @@ export function DashboardHeading({ eyebrow, title, description }: { eyebrow?: st
 }
 
 export const networks = [
-  { name: "Ethereum", symbol: "ETH", color: "#627eea", detail: "Ethereum Mainnet", address: "0x71d8C4A2eB8c4e4a9A4c" },
-  { name: "Bitcoin", symbol: "BTC", color: "#f7931a", detail: "Bitcoin Network", address: "bc1qalphainfortrading7m3n" },
-  { name: "Solana", symbol: "SOL", color: "#6857f5", detail: "Solana Mainnet", address: "7AlphaInfoTrading9Solana" },
+  { name: "Ethereum", symbol: "ETH", color: "#627eea", detail: "Ethereum Mainnet", address: "0xB1ABE07cFE7FDb28A3833EF319711A175572f769", qrImage: "/images/eth.jpeg" },
+  { name: "Bitcoin", symbol: "BTC", color: "#f7931a", detail: "Bitcoin Network", address: "bc1qkmnxzrvlkelwvc9y8j29lpaj2xl8xxvu7n990j", qrImage: "/images/btc.jpeg" },
+  { name: "Solana", symbol: "SOL", color: "#6857f5", detail: "Solana Mainnet", address: "6ek33B9N9NqwiYeYP52QFwHChFKsUqNszhTN2iAXaMRD", qrImage: "/images/sol.jpeg" },
 ];

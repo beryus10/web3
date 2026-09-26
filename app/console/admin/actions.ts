@@ -61,10 +61,11 @@ export async function approveDeposit(formData: FormData) {
 export async function reviewWithdrawal(formData: FormData) {
   const supabase = await requireAdmin();
   const requestId = String(formData.get("request_id") || "");
-  const decision = String(formData.get("decision") || "");
-  if (!requestId || !["approved", "rejected"].includes(decision)) {
+  const decisionValue = formData.get("decision");
+  if (!requestId || (decisionValue !== "approved" && decisionValue !== "rejected")) {
     throw new Error("A valid withdrawal decision is required");
   }
+  const decision: "approved" | "rejected" = decisionValue;
 
   const { error } = await supabase.rpc("review_withdrawal", {
     request_id: requestId,

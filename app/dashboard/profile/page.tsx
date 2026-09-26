@@ -2,12 +2,14 @@
 
 import { useEffect, useState } from "react";
 import { DashboardHeading, DashboardShell, useDashboardProfile } from "../dashboard-shell";
+import { useDashboardProfileContext } from "../dashboard-context";
 import { createClient } from "@/lib/supabase/client";
 
 const supabase = createClient();
 
 export default function ProfilePage() {
   const profile = useDashboardProfile();
+  const { refreshProfile } = useDashboardProfileContext();
   const [name, setName] = useState("");
   const [phone, setPhone] = useState("");
   const [saved, setSaved] = useState(false);
@@ -25,7 +27,12 @@ export default function ProfilePage() {
       .from("profiles")
       .update({ full_name: name.trim() || profile.full_name, phone: phone.trim() })
       .eq("id", profile.id);
-    setSaved(!error);
+    if (!error) {
+      await refreshProfile();
+      setSaved(true);
+    } else {
+      setSaved(false);
+    }
   };
 
   const initials = name ? name.split(" ").map((part) => part[0]).join("").slice(0, 2).toUpperCase() : "--";

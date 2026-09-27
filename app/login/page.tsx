@@ -5,6 +5,11 @@ import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
 
+function sanitizeInvitedBy(value: string | null) {
+  if (!value) return null;
+  return value.trim() || null;
+}
+
 function LoginContent() {
   const [signupOverride, setSignupOverride] = useState<boolean | null>(null);
   const [name, setName] = useState("");
@@ -16,7 +21,8 @@ function LoginContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const supabase = createClient();
-  const isSignup = signupOverride ?? searchParams.get("mode") === "signup";
+  const invitedBy = sanitizeInvitedBy(searchParams.get("invitedby"));
+  const isSignup = signupOverride ?? (searchParams.get("mode") === "signup" || Boolean(invitedBy));
 
   const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -28,7 +34,12 @@ function LoginContent() {
       ? await supabase.auth.signUp({
           email,
           password,
-          options: { data: { full_name: name } },
+          options: {
+            data: {
+              full_name: name,
+              invited_by: invitedBy,
+            },
+          },
         })
       : await supabase.auth.signInWithPassword({ email, password });
 
@@ -87,6 +98,26 @@ function LoginContent() {
               {isSignup ? "Log in" : "Create an account"}
             </button>
           </p>
+          {invitedBy && isSignup && (
+            <div
+              className="invited-banner"
+              style={{
+                alignItems: "center",
+                background: "rgba(8, 184, 135, 0.12)",
+                border: "1px solid rgba(8, 184, 135, 0.35)",
+                borderRadius: "8px",
+                color: "#20d9a6",
+                display: "flex",
+                fontSize: "12px",
+                gap: "8px",
+                marginBottom: "16px",
+                padding: "10px 14px",
+              }}
+            >
+              <span aria-hidden="true">🤝</span>
+              <span>You were invited to join! Complete your signup below to get started.</span>
+            </div>
+          )}
           <form onSubmit={handleSubmit}>
             {isSignup && (
               <>

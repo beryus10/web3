@@ -2,11 +2,13 @@
 
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
 import { createClient } from "@/lib/supabase/client";
 import { useDashboardProfileContext } from "./dashboard-context";
 import { LanguageSelector } from "./language-selector";
+import { BrandMark } from "../brand-mark";
 
-export type DashboardNav = "dashboard" | "fund" | "withdraw" | "history" | "profile";
+export type DashboardNav = "dashboard" | "fund" | "withdraw" | "history" | "profile" | "support";
 
 const supabase = createClient();
 
@@ -15,51 +17,133 @@ export function useDashboardProfile() {
 }
 
 const navigation: { id: DashboardNav; label: string; href: string; icon: string }[] = [
-  { id: "dashboard", label: "Dashboard", href: "/dashboard", icon: "⌂" },
-  { id: "fund", label: "Fund Account", href: "/dashboard/fund", icon: "▣" },
-  { id: "withdraw", label: "Withdraw", href: "/dashboard/withdraw", icon: "↗" },
+  { id: "dashboard", label: "Home", href: "/dashboard", icon: "⌂" },
+  { id: "fund", label: "Deposit", href: "/dashboard/fund", icon: "+" },
+  { id: "withdraw", label: "Withdraw", href: "/dashboard/withdraw", icon: "↓" },
   { id: "history", label: "History", href: "/dashboard/history", icon: "↶" },
   { id: "profile", label: "Profile", href: "/dashboard/profile", icon: "●" },
+  { id: "support", label: "Support", href: "/dashboard/support", icon: "?" },
 ];
+
+const bottomNavigation = ["fund", "withdraw", "dashboard", "profile", "support"] as const;
+
+import { DashboardChatBox } from "./components/DashboardChatBox";
 
 export function DashboardShell({ active, children }: { active: DashboardNav; children: React.ReactNode }) {
   const profile = useDashboardProfile();
   const router = useRouter();
+  const [drawerOpen, setDrawerOpen] = useState(false);
+  useEffect(() => {
+    if (!drawerOpen) return;
+    const previousOverflow = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    const closeOnEscape = (event: KeyboardEvent) => {
+      if (event.key === "Escape") setDrawerOpen(false);
+    };
+    window.addEventListener("keydown", closeOnEscape);
+    return () => {
+      document.body.style.overflow = previousOverflow;
+      window.removeEventListener("keydown", closeOnEscape);
+    };
+  }, [drawerOpen]);
   const initials = profile?.full_name
     ? profile.full_name.split(" ").map((part) => part[0]).join("").slice(0, 2).toUpperCase()
     : "--";
 
+  const firstLetter = profile?.full_name?.trim()
+    ? profile.full_name.trim()[0].toUpperCase()
+    : profile?.email?.trim()
+    ? profile.email.trim()[0].toUpperCase()
+    : "U";
+
   return (
     <main className="dashboard-page">
-      <aside className="dashboard-sidebar">
-        <Link className="dashboard-brand" href="/"><span className="dashboard-brand-mark">↗</span><span>alphainfortrading</span></Link>
+      {drawerOpen && <button aria-label="Close navigation" className="dashboard-drawer-backdrop" onClick={() => setDrawerOpen(false)} type="button" />}
+      <aside aria-hidden={!drawerOpen} className={`dashboard-sidebar ${drawerOpen ? "is-open" : ""}`}>
+        <div className="dashboard-drawer-heading">
+          <Link className="dashboard-brand" href="/" onClick={() => setDrawerOpen(false)}><BrandMark className="dashboard-brand-mark" /><span>alphainfortrading</span></Link>
+          <button aria-label="Close navigation" className="dashboard-drawer-close" onClick={() => setDrawerOpen(false)} type="button">×</button>
+        </div>
         <div className="dashboard-account"><span className="dashboard-avatar">{initials}</span><span><b>{profile?.full_name || "Your account"}</b><small>{profile?.email || "Loading profile..."}</small></span></div>
         <nav className="dashboard-sidebar-nav" aria-label="Dashboard navigation">
-          {navigation.map((item) => <Link className={active === item.id ? "active" : ""} href={item.href} key={item.id}><span>{item.icon}</span>{item.label}</Link>)}
+          {navigation.map((item) => <Link aria-current={active === item.id ? "page" : undefined} className={active === item.id ? "active" : ""} href={item.href} key={item.id} onClick={() => setDrawerOpen(false)}><span>{item.icon}</span>{item.label}</Link>)}
         </nav>
         <button className="dashboard-logout" onClick={async () => { await supabase.auth.signOut(); router.push("/login"); }} type="button"><span>↪</span>Log out</button>
       </aside>
       <header className="dashboard-topbar">
+        <div className="dashboard-topbar-start">
+          <button aria-expanded={drawerOpen} aria-label="Open navigation" className="dashboard-menu-button" onClick={() => setDrawerOpen(true)} type="button"><span /><span /><span /></button>
         <Link className="dashboard-mobile-brand" href="/">
-          <span className="dashboard-brand-mark">↗</span>
+          <BrandMark className="dashboard-brand-mark" />
           <span>alphainfortrading</span>
         </Link>
+        </div>
         <div className="dashboard-topbar-content">
           <span className="dashboard-topbar-welcome">Welcome back, <b>{profile?.full_name || "there"}</b></span>
           <LanguageSelector />
-          <span className="dashboard-avatar">{initials}</span>
+          <Link aria-label="Open profile" className="dashboard-user-button" href="/dashboard/profile"><span className="dashboard-avatar">{initials}</span></Link>
         </div>
       </header>
-      <section className="dashboard-main">{children}</section>
-      <nav className="dashboard-mobile-dock" aria-label="Dashboard navigation">{navigation.map((item) => <Link className={active === item.id ? "active" : ""} href={item.href} key={item.id} aria-label={item.label}><span>{item.icon}</span></Link>)}</nav>
+      <section className="dashboard-main">
+        <DashboardChatBox />
+        {children}
+      </section>
+      <nav className="dashboard-mobile-dock" aria-label="Dashboard navigation">
+        {bottomNavigation.map((id) => {
+          const item = navigation.find((entry) => entry.id === id)!;
+          const isHome = item.id === "dashboard";
+          const isProfile = item.id === "profile";
+          return (
+            <Link
+              aria-current={active === item.id ? "page" : undefined}
+              className={`${active === item.id ? "active" : ""} ${isHome ? "home" : ""} ${isProfile ? "dock-profile" : ""}`}
+              href={item.href}
+              key={item.id}
+            >
+              {isProfile ? (
+                <span className="dashboard-dock-avatar-circle" aria-hidden="true">{firstLetter}</span>
+              ) : (
+                <span className="dashboard-dock-icon">{item.icon}</span>
+              )}
+              <small>{item.label}</small>
+            </Link>
+          );
+        })}
+      </nav>
     </main>
   );
 }
 
-export function DashboardHeading({ eyebrow, title, description }: { eyebrow?: string; title: string; description?: string }) {
+export function DashboardHeading({
+  eyebrow,
+  title,
+  description,
+  customBalance,
+  customLabel,
+}: {
+  eyebrow?: string;
+  title: string;
+  description?: string;
+  customBalance?: number;
+  customLabel?: string;
+}) {
   const profile = useDashboardProfile();
-  const balance = profile?.balance ?? 0;
-  return <div className="dashboard-heading"><div>{eyebrow && <p className="dashboard-kicker">{eyebrow}</p>}<h1>{title}</h1>{description && <p>{description}</p>}</div><div className="dashboard-balance"><span>Total balance</span><strong>${balance.toLocaleString("en-US", { minimumFractionDigits: 2 })}</strong><small><b>Live</b> account balance</small></div></div>;
+  const balance = customBalance !== undefined ? customBalance : (profile?.balance ?? 0);
+  const label = customLabel || "Total balance";
+  return (
+    <div className="dashboard-heading">
+      <div>
+        {eyebrow && <p className="dashboard-kicker">{eyebrow}</p>}
+        <h1>{title}</h1>
+        {description && <p>{description}</p>}
+      </div>
+      <div className="dashboard-balance">
+        <span>{label}</span>
+        <strong>${balance.toLocaleString("en-US", { minimumFractionDigits: 2 })}</strong>
+        <small><b>Live</b> account balance</small>
+      </div>
+    </div>
+  );
 }
 
 export const networks = [

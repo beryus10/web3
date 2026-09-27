@@ -22,6 +22,7 @@ function profileFromAuth(user: {
     email: user.email || "",
     full_name: typeof user.user_metadata.full_name === "string" ? user.user_metadata.full_name : "Your account",
     phone: typeof user.user_metadata.phone === "string" ? user.user_metadata.phone : "",
+    referred_by: null,
     role: "user",
     balance: 0,
     active_investment: 0,
@@ -74,8 +75,10 @@ export function DashboardProvider({ children }: { children: React.ReactNode }) {
       if (!active) return;
       await loadProfile();
     };
+    const handleFocus = () => void refresh();
 
     void refresh();
+    window.addEventListener("focus", handleFocus);
     const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
       if (event === "INITIAL_SESSION") return;
       if (!session?.user) {
@@ -91,6 +94,7 @@ export function DashboardProvider({ children }: { children: React.ReactNode }) {
 
     return () => {
       active = false;
+      window.removeEventListener("focus", handleFocus);
       subscription.unsubscribe();
     };
   }, [loadProfile]);

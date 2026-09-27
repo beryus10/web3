@@ -29,7 +29,7 @@ NEXT_PUBLIC_SUPABASE_URL=your-project-url
 NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY=your-publishable-key
 ```
 
-2. In the Supabase SQL Editor, run [`supabase/schema.sql`](supabase/schema.sql). If the schema was already installed, run [`supabase/add-withdrawal-requests.sql`](supabase/add-withdrawal-requests.sql), [`supabase/review-withdrawals.sql`](supabase/review-withdrawals.sql), and [`supabase/fix-duplicate-deposits.sql`](supabase/fix-duplicate-deposits.sql).
+2. In the Supabase SQL Editor, run [`supabase/schema.sql`](supabase/schema.sql). If the schema was already installed, run [`supabase/add-withdrawal-requests.sql`](supabase/add-withdrawal-requests.sql), [`supabase/review-withdrawals.sql`](supabase/review-withdrawals.sql), [`supabase/fix-duplicate-deposits.sql`](supabase/fix-duplicate-deposits.sql), [`supabase/add-support-messages.sql`](supabase/add-support-messages.sql), and [`supabase/add-referrals.sql`](supabase/add-referrals.sql).
 	If you already ran an earlier version, also run `alter table public.profiles add column if not exists phone text not null default '';`.
 3. Create an account through `/login?mode=signup`.
 4. Promote the first admin from the Supabase SQL Editor:

@@ -3,6 +3,7 @@
 import Link from "next/link";
 import Image from "next/image";
 import { useEffect, useState } from "react";
+import { BrandMark } from "./brand-mark";
 
 const services = [
   [
@@ -119,9 +120,7 @@ export default function Home() {
             aria-label="Main navigation"
           >
             <Link className="lv-brand" href="/">
-              <span className="lv-logo">
-                <span>↗</span>
-              </span>
+              <BrandMark className="lv-logo" />
               <span>alphainfortrading</span>
             </Link>
             <div
@@ -440,9 +439,7 @@ export default function Home() {
           <div className="lv-footer-grid">
             <div>
               <Link className="lv-brand" href="/">
-                <span className="lv-logo">
-                  <span>↗</span>
-                </span>
+                <BrandMark className="lv-logo" />
                 <span>alphainfortrading</span>
               </Link>
               <p>
@@ -469,10 +466,7 @@ export default function Home() {
               <a href="mailto:hello@alphainfortrading.com">
                 ✉ hello@alphainfortrading.com
               </a>
-              <span>
-                ⌖ 123 Financial District,
-                <br /> New York, NY 10005
-              </span>
+              <span>Texas Business Brokers - Austin Office - Austin, TX</span>
             </div>
           </div>
           <div className="lv-footer-bottom">

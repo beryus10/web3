@@ -9,6 +9,7 @@ create table public.profiles (
   email text not null,
   full_name text not null default '',
   phone text not null default '',
+  referred_by uuid references public.profiles(id) on delete set null,
   role public.user_role not null default 'user',
   balance numeric(18, 2) not null default 0 check (balance >= 0),
   active_investment numeric(18, 2) not null default 0 check (active_investment >= 0),
@@ -48,23 +49,47 @@ create table public.balance_transactions (
   created_at timestamptz not null default now()
 );
 
+create table public.support_messages (
+  id uuid primary key default gen_random_uuid(),
+  user_id uuid not null references public.profiles(id) on delete cascade,
+  sender_role text not null check (sender_role in ('user', 'admin')),
+  body text not null check (char_length(body) between 1 and 4000),
+  created_at timestamptz not null default now()
+);
+
 create index deposit_requests_user_id_idx on public.deposit_requests(user_id);
 create index deposit_requests_status_idx on public.deposit_requests(status);
 create index withdrawal_requests_user_id_idx on public.withdrawal_requests(user_id);
 create index withdrawal_requests_status_idx on public.withdrawal_requests(status);
 create index balance_transactions_user_id_idx on public.balance_transactions(user_id);
+create index support_messages_user_created_idx on public.support_messages(user_id, created_at);
+create index profiles_referred_by_idx on public.profiles(referred_by);
 
 create or replace function public.handle_new_user()
 returns trigger
 language plpgsql
 security definer set search_path = public
 as $$
+declare
+  inviter_id uuid;
+  inviter_value text;
 begin
-  insert into public.profiles (id, email, full_name)
+  inviter_value := new.raw_user_meta_data ->> 'invited_by';
+  if inviter_value ~* '^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$' then
+    inviter_id := inviter_value::uuid;
+    if inviter_id = new.id or not exists (
+      select 1 from public.profiles where id = inviter_id and role = 'user'
+    ) then
+      inviter_id := null;
+    end if;
+  end if;
+
+  insert into public.profiles (id, email, full_name, referred_by)
   values (
     new.id,
     coalesce(new.email, ''),
-    coalesce(new.raw_user_meta_data ->> 'full_name', '')
+    coalesce(new.raw_user_meta_data ->> 'full_name', ''),
+    inviter_id
   );
   return new;
 end;
@@ -89,6 +114,7 @@ alter table public.profiles enable row level security;
 alter table public.deposit_requests enable row level security;
 alter table public.withdrawal_requests enable row level security;
 alter table public.balance_transactions enable row level security;
+alter table public.support_messages enable row level security;
 
 create policy "Users can view their own profile"
 on public.profiles for select to authenticated
@@ -133,6 +159,18 @@ with check (public.is_admin());
 create policy "Users can view their transactions"
 on public.balance_transactions for select to authenticated
 using (user_id = auth.uid() or public.is_admin());
+
+create policy "Users and admins can view support messages"
+on public.support_messages for select to authenticated
+using (user_id = auth.uid() or public.is_admin());
+
+create policy "Users can start support messages"
+on public.support_messages for insert to authenticated
+with check (user_id = auth.uid() and sender_role = 'user');
+
+create policy "Admins can reply to support messages"
+on public.support_messages for insert to authenticated
+with check (public.is_admin() and sender_role = 'admin');
 
 create or replace function public.adjust_user_balance(
   target_user_id uuid,

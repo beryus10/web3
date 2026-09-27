@@ -5,6 +5,7 @@ export type Profile = {
   email: string;
   full_name: string;
   phone: string;
+  referred_by: string | null;
   role: UserRole;
   balance: number;
   active_investment: number;
@@ -66,6 +67,18 @@ export type Database = {
           created_at: string;
         };
         Insert: Omit<Database["public"]["Tables"]["balance_transactions"]["Row"], "id" | "created_at">;
+        Update: never;
+        Relationships: [];
+      };
+      support_messages: {
+        Row: {
+          id: string;
+          user_id: string;
+          sender_role: "user" | "admin";
+          body: string;
+          created_at: string;
+        };
+        Insert: Pick<Database["public"]["Tables"]["support_messages"]["Row"], "user_id" | "sender_role" | "body">;
         Update: never;
         Relationships: [];
       };

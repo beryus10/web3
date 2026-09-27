@@ -46,6 +46,29 @@ export async function adjustUserBalance(formData: FormData) {
   revalidatePath("/dashboard");
 }
 
+export async function updateUserFinancials(formData: FormData) {
+  const supabase = await requireAdmin();
+  const userId = String(formData.get("user_id") || "");
+  const balance = Number(formData.get("balance"));
+  const activeInvestment = Number(formData.get("active_investment"));
+
+  if (!userId || !Number.isFinite(balance) || balance < 0 || !Number.isFinite(activeInvestment) || activeInvestment < 0) {
+    throw new Error("Enter valid non-negative balance and investment values");
+  }
+
+  const { error } = await supabase
+    .from("profiles")
+    .update({ balance, active_investment: activeInvestment })
+    .eq("id", userId)
+    .eq("role", "user");
+  if (error) throw new Error(error.message);
+
+  revalidatePath(`/console/admin/users/${userId}`);
+  revalidatePath("/console/admin/users");
+  revalidatePath("/console/admin");
+  revalidatePath("/dashboard");
+}
+
 export async function approveDeposit(formData: FormData) {
   const supabase = await requireAdmin();
   const requestId = String(formData.get("request_id") || "");

@@ -1,9 +1,12 @@
 "use client";
 
 import Link from "next/link";
-import Image from "next/image";
 import { useEffect, useState } from "react";
 import { BrandMark } from "./brand-mark";
+import { TeamSection } from "./components/team-section";
+import { SiteFooter } from "./components/site-footer";
+import { faqItems } from "./faq-content";
+import { investmentPlans } from "./plan-content";
 
 const services = [
   [
@@ -47,30 +50,6 @@ const services = [
     "Send money across borders in seconds, without waiting for bank hours.",
     "↗",
     "lv-service-indigo",
-  ],
-];
-
-const plans = [
-  [
-    "Starter",
-    "For getting familiar with digital assets.",
-    "$100",
-    "$2,000",
-    "Flexible access",
-  ],
-  [
-    "Growth",
-    "For building a consistent long-term strategy.",
-    "$2,000",
-    "$25,000",
-    "Priority support",
-  ],
-  [
-    "Private",
-    "For experienced investors and larger portfolios.",
-    "$25,000",
-    "$250,000",
-    "Dedicated guidance",
   ],
 ];
 
@@ -128,21 +107,21 @@ export default function Home() {
               id="mobile-navigation"
             >
               <div className="lv-nav-links">
-                <a href="#about" onClick={() => setIsNavOpen(false)}>
+                <Link href="/about" onClick={() => setIsNavOpen(false)}>
                   About
-                </a>
+                </Link>
                 <a href="#services" onClick={() => setIsNavOpen(false)}>
                   Services
                 </a>
                 <a href="#plans" onClick={() => setIsNavOpen(false)}>
                   Plans
                 </a>
-                <a href="#faq" onClick={() => setIsNavOpen(false)}>
+                <Link href="/faq" onClick={() => setIsNavOpen(false)}>
                   FAQ
-                </a>
-                <a href="#contact" onClick={() => setIsNavOpen(false)}>
+                </Link>
+                <Link href="/contact" onClick={() => setIsNavOpen(false)}>
                   Contact
-                </a>
+                </Link>
               </div>
               <div className="lv-nav-actions">
                 <Link href="/login" onClick={() => setIsNavOpen(false)}>
@@ -168,7 +147,7 @@ export default function Home() {
               {isNavOpen ? "×" : "☰"}
             </button>
           </nav>
-          <div className="lv-hero-copy" id="about">
+          <div className="lv-hero-copy">
             <p className="lv-kicker">
               <span>✦</span> The future of digital finance is here
             </p>
@@ -312,7 +291,7 @@ export default function Home() {
             </p>
           </div>
           <div className="lv-plan-grid">
-            {plans.map(([name, description, min, max, extra], index) => (
+            {investmentPlans.map(({ name, description, minimum, maximum, benefit }, index) => (
               <article
                 className={`lv-plan-card ${index === 1 ? "lv-plan-featured" : ""}`}
                 key={name}
@@ -323,14 +302,14 @@ export default function Home() {
                 <h3>{name}</h3>
                 <p>{description}</p>
                 <div className="lv-plan-range">
-                  <strong>{min}</strong>
+                  <strong>{minimum}</strong>
                   <span>to</span>
-                  <strong>{max}</strong>
+                  <strong>{maximum}</strong>
                 </div>
                 <ul>
                   <li>Fast token conversion</li>
                   <li>Secure wallet access</li>
-                  <li>{extra}</li>
+                  <li>{benefit}</li>
                 </ul>
                 <Link className="lv-plan-button" href="/login?mode=signup">
                   Choose plan <span>↗</span>
@@ -348,74 +327,19 @@ export default function Home() {
             <h2>Frequently asked questions</h2>
           </div>
           <div className="lv-faq-list">
-            <details>
-              <summary>
-                How do I get started?<span>⌄</span>
-              </summary>
-              <p>
-                Create an account, complete verification, and connect your
-                wallet. You can start exploring services right away.
-              </p>
-            </details>
-            <details>
-              <summary>
-                Is my money secure?<span>⌄</span>
-              </summary>
-              <p>
-                Your account is protected with modern encryption, multi-factor
-                authentication, and secure custody controls.
-              </p>
-            </details>
-            <details>
-              <summary>
-                What are the fees?<span>⌄</span>
-              </summary>
-              <p>
-                We show every applicable fee before you confirm a transaction.
-                No surprises at checkout.
-              </p>
-            </details>
-            <details>
-              <summary>
-                Can I withdraw at any time?<span>⌄</span>
-              </summary>
-              <p>
-                Available balances can be moved whenever you choose, subject to
-                the terms of the service you use.
-              </p>
-            </details>
+            {faqItems.map(({ question, answer }) => (
+              <details key={question}>
+                <summary>
+                  {question}<span>⌄</span>
+                </summary>
+                <p>{answer}</p>
+              </details>
+            ))}
           </div>
         </div>
       </section>
 
-      <section className="lv-founder">
-        <div className="lv-container">
-          <div className="lv-founder-image">
-            <Image
-              src="/images/ceo.jpeg"
-              alt="Brian Jordan Ellis, CEO and founder of alphainfortrading"
-              fill
-              sizes="(max-width: 800px) 100vw, 320px"
-            />
-          </div>
-          <div>
-            <p className="lv-label">Team in charge</p>
-            <h2>
-              Built with a clear
-              <br />
-              <em>point of view.</em>
-            </h2>
-            <p>
-              alphainfortrading was founded by{" "}
-              <strong>Brian Jordan Ellis</strong> to make digital finance more
-              understandable, secure, and useful for everyone.
-            </p>
-            <span className="lv-founder-title">
-              Brian Jordan Ellis / CEO &amp; Founder
-            </span>
-          </div>
-        </div>
-      </section>
+      <TeamSection id="about" />
 
       <section className="lv-cta">
         <div className="lv-container">
@@ -434,47 +358,7 @@ export default function Home() {
         </div>
       </section>
 
-      <footer className="lv-footer" id="contact">
-        <div className="lv-container">
-          <div className="lv-footer-grid">
-            <div>
-              <Link className="lv-brand" href="/">
-                <BrandMark className="lv-logo" />
-                <span>alphainfortrading</span>
-              </Link>
-              <p>
-                Your trusted partner for clearer, faster digital finance. Built
-                for the global economy.
-              </p>
-            </div>
-            <div>
-              <h3>Quick links</h3>
-              <a href="#about">About us</a>
-              <a href="#services">Services</a>
-              <a href="#plans">Plans</a>
-              <a href="#faq">FAQ</a>
-            </div>
-            <div>
-              <h3>Account</h3>
-              <Link href="/login">Login</Link>
-              <Link href="/login?mode=signup">Register</Link>
-              <a href="#contact">Contact us</a>
-              <a href="#security">Security</a>
-            </div>
-            <div>
-              <h3>Contact info</h3>
-              <a href="mailto:hello@alphainfortrading.com">
-                ✉ hello@alphainfortrading.com
-              </a>
-              <span>Texas Business Brokers - Austin Office - Austin, TX</span>
-            </div>
-          </div>
-          <div className="lv-footer-bottom">
-            <span>© 2026 alphainfortrading. All rights reserved.</span>
-            <span>Privacy policy &nbsp;&nbsp; Terms of service</span>
-          </div>
-        </div>
-      </footer>
+      <SiteFooter />
     </main>
   );
 }

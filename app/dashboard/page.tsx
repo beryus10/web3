@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useState } from "react";
-import { DashboardHeading, DashboardShell, useDashboardProfile } from "./dashboard-shell";
+import { DashboardHeading, DashboardIcon, DashboardShell, useDashboardProfile } from "./dashboard-shell";
 import { MarketChart } from "./market-chart";
 
 export default function DashboardPage() {
@@ -68,10 +68,10 @@ export default function DashboardPage() {
       <MarketChart />
 
       <div className="dashboard-quick-actions">
-        <Link href="/dashboard/fund"><span>+</span><b>Deposit</b></Link>
-        <Link href="/dashboard/withdraw"><span>↓</span><b>Withdraw</b></Link>
-        <Link href="/dashboard/history"><span>↶</span><b>History</b></Link>
-        <Link href="/dashboard/profile"><span>●</span><b>Profile</b></Link>
+        <Link href="/dashboard/withdraw"><span><DashboardIcon name="withdraw" /></span><b>Send</b></Link>
+        <Link href="/dashboard/fund"><span><DashboardIcon name="deposit" /></span><b>Deposit</b></Link>
+        <Link href="/dashboard/history"><span><DashboardIcon name="history" /></span><b>History</b></Link>
+        <Link href="/dashboard/profile"><span><DashboardIcon name="profile" /></span><b>Profile</b></Link>
       </div>
 
       <section className="dashboard-invite">

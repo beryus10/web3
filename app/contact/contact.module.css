@@ -1,0 +1,255 @@
+.page {
+  background: #fff;
+  color: #10203b;
+  font-family: 'Manrope', Arial, sans-serif;
+  min-height: 100vh;
+}
+
+.intro {
+  align-items: center;
+  background-color: #0f192d;
+  background-image: linear-gradient(115deg, transparent 42%, rgba(33, 62, 108, 0.13) 42%, rgba(33, 62, 108, 0.13) 58%, transparent 58%), linear-gradient(65deg, transparent 44%, rgba(33, 62, 108, 0.1) 44%, rgba(33, 62, 108, 0.1) 61%, transparent 61%);
+  color: #fff;
+  display: flex;
+  justify-content: center;
+  min-height: 138px;
+  overflow: hidden;
+  padding: 22px 24px;
+  position: relative;
+  text-align: center;
+}
+
+.introContent h1 {
+  font-size: 38px;
+  line-height: 1.1;
+  margin: 0;
+}
+
+.introContent p {
+  color: #aab7ca;
+  font-size: 14px;
+  line-height: 1.55;
+  margin: 10px auto 0;
+}
+
+.details {
+  background: #fff;
+}
+
+.detailsInner {
+  display: grid;
+  gap: 70px;
+  grid-template-columns: minmax(0, 1.5fr) minmax(230px, 0.9fr);
+  margin: 0 auto;
+  max-width: 1220px;
+  min-height: 276px;
+  padding: 62px 24px 48px;
+}
+
+.kicker {
+  color: #08a97c;
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 0.06em;
+  margin: 0 0 10px;
+  text-transform: uppercase;
+}
+
+.message h2 {
+  color: #17243d;
+  font-size: 25px;
+  line-height: 1.25;
+  margin: 0;
+}
+
+.description {
+  color: #71839b;
+  font-size: 13px;
+  line-height: 1.7;
+  margin: 16px 0 25px;
+  max-width: 620px;
+}
+
+.contactItem,
+.location {
+  align-items: flex-start;
+  display: flex;
+  gap: 13px;
+}
+
+.contactIcon,
+.locationIcon {
+  align-items: center;
+  background: #f2eaff;
+  border-radius: 7px;
+  color: #903be2;
+  display: inline-flex;
+  flex: 0 0 42px;
+  font-size: 18px;
+  height: 42px;
+  justify-content: center;
+}
+
+.contactItem h3,
+.location h3 {
+  color: #17243d;
+  font-size: 14px;
+  line-height: 1.3;
+  margin: 0 0 5px;
+}
+
+.contactItem a,
+.location p {
+  color: #71839b;
+  display: block;
+  font-size: 12px;
+  line-height: 1.55;
+  margin: 0;
+  overflow-wrap: anywhere;
+}
+
+.location {
+  align-self: start;
+  margin-top: 2px;
+}
+
+.formSection {
+  background: #f7f9fb;
+  border: 1px solid #edf1f5;
+  border-radius: 12px;
+  margin: 0 auto 60px;
+  max-width: 1440px;
+  padding: 24px 24px 25px;
+  width: 100%;
+}
+
+.formInner {
+  margin: 0 auto;
+  max-width: 1280px;
+}
+
+.formInner h2 {
+  color: #17243d;
+  font-size: 20px;
+  line-height: 1.3;
+  margin: 0 0 22px;
+}
+
+.form {
+  display: grid;
+  gap: 19px;
+}
+
+.fieldGrid {
+  display: grid;
+  gap: 20px;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.form label {
+  color: #52637b;
+  display: grid;
+  font-size: 11px;
+  gap: 7px;
+}
+
+.form input,
+.form textarea {
+  background: #fff;
+  border: 1px solid #dfe7ee;
+  border-radius: 7px;
+  color: #17243d;
+  font: 13px 'Manrope', Arial, sans-serif;
+  outline: none;
+  padding: 11px 13px;
+  width: 100%;
+}
+
+.form input {
+  height: 43px;
+}
+
+.form textarea {
+  min-height: 126px;
+  resize: vertical;
+}
+
+.form input:focus,
+.form textarea:focus {
+  border-color: #08b887;
+  box-shadow: 0 0 0 3px rgba(8, 184, 135, 0.12);
+}
+
+.form input::placeholder,
+.form textarea::placeholder {
+  color: #9aa8ba;
+}
+
+.submit {
+  background: #08a978;
+  border: 0;
+  border-radius: 6px;
+  box-shadow: 0 6px 12px rgba(8, 169, 120, 0.16);
+  color: #fff;
+  cursor: pointer;
+  font: 700 13px 'Manrope', Arial, sans-serif;
+  min-height: 46px;
+  transition: background 160ms ease;
+}
+
+.submit:hover {
+  background: #078e66;
+}
+
+.submit:focus-visible {
+  outline: 3px solid rgba(8, 169, 120, 0.35);
+  outline-offset: 2px;
+}
+
+.status {
+  color: #52637b;
+  font-size: 12px;
+  margin: -8px 0 0;
+  min-height: 1em;
+}
+
+@media (max-width: 700px) {
+  .detailsInner {
+    gap: 30px;
+    grid-template-columns: 1fr;
+    min-height: 0;
+    padding: 46px 22px;
+  }
+
+  .location {
+    margin-top: 0;
+  }
+
+  .formSection {
+    border-radius: 10px;
+    margin-bottom: 40px;
+    padding: 22px 18px;
+  }
+}
+
+@media (max-width: 540px) {
+  .intro {
+    min-height: 132px;
+  }
+
+  .introContent h1 {
+    font-size: 33px;
+  }
+
+  .introContent p {
+    font-size: 12px;
+  }
+
+  .message h2 {
+    font-size: 22px;
+  }
+
+  .fieldGrid {
+    grid-template-columns: 1fr;
+  }
+}

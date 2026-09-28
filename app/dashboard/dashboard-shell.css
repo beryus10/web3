@@ -118,6 +118,8 @@
 .dashboard-mobile-dock a.home:hover { transform: scale(1.05); }
 .dashboard-mobile-dock a.home .dashboard-dock-icon { font-size: 24px; height: 24px; }
 .dashboard-mobile-dock a.home small { color: #d9fff3; font-weight: 700; }
+.dashboard-sidebar-nav a > span { align-items: center; display: flex; flex: 0 0 20px; justify-content: center; width: 20px; }
+.dashboard-dock-icon svg { display: block; height: 20px; width: 20px; }
 
 .support-contact-strip { display: grid; gap: 14px; grid-template-columns: 1fr 1fr; margin-bottom: 20px; }
 .support-contact-strip > div { align-items: center; background: #1e2c42; border: 1px solid #2e4059; border-radius: 10px; display: flex; gap: 12px; min-width: 0; padding: 16px; }
@@ -213,4 +215,28 @@
   .support-chat-heading { align-items: flex-start; flex-direction: column; gap: 10px; }
   .support-compose { align-items: stretch; flex-direction: column; }
   .support-message { max-width: 90%; }
+}
+
+.investment-plan-grid { display: grid; gap: 16px; grid-template-columns: repeat(3, minmax(0, 1fr)); }
+.investment-plan-card { background: #1d2a40; border: 1px solid #344761; border-radius: 12px; display: flex; flex-direction: column; min-width: 0; padding: 22px; }
+.investment-plan-card.is-featured { border-color: #20d9a6; box-shadow: 0 12px 28px rgba(8, 184, 135, .12); }
+.investment-plan-topline { align-items: center; display: flex; justify-content: space-between; min-height: 42px; }
+.investment-plan-icon { align-items: center; background: #124b54; border-radius: 9px; color: #20d9a6; display: inline-flex; height: 40px; justify-content: center; width: 40px; }
+.investment-plan-badge { background: #124b54; border-radius: 999px; color: #7ce8ca; font-size: 9px; font-weight: 800; padding: 6px 9px; text-transform: uppercase; }
+.investment-plan-eyebrow { color: #20d9a6; font-size: 9px; font-weight: 800; letter-spacing: .08em; margin: 20px 0 7px; text-transform: uppercase; }
+.investment-plan-card h2 { color: #f4f7fb; font-size: 20px; letter-spacing: -.04em; margin: 0; }
+.investment-plan-description { color: #9aadc5; font-size: 11px; line-height: 1.6; margin: 8px 0 20px; min-height: 36px; }
+.investment-plan-range { border-bottom: 1px solid #344761; border-top: 1px solid #344761; padding: 13px 0; }
+.investment-plan-range > span { color: #91a6c0; display: block; font-size: 9px; margin-bottom: 7px; }
+.investment-plan-range strong { align-items: baseline; color: #f4f7fb; display: flex; font-size: 15px; gap: 6px; white-space: nowrap; }
+.investment-plan-range i { color: #91a6c0; font-size: 9px; font-style: normal; font-weight: 500; }
+.investment-plan-card ul { display: grid; gap: 10px; list-style: none; margin: 0; padding: 17px 0 20px; }
+.investment-plan-card li { color: #c0ccda; font-size: 10px; line-height: 1.4; }
+.investment-plan-card li::before { color: #20d9a6; content: '✓'; font-weight: 800; margin-right: 8px; }
+.investment-plan-note { border-top: 1px solid #344761; color: #91a6c0; font-size: 10px; margin: auto 0 0; padding-top: 14px; }
+
+@media (max-width: 900px) {
+  .investment-plan-grid { grid-template-columns: 1fr; }
+  .investment-plan-card { padding: 20px; }
+  .investment-plan-description { min-height: 0; }
 }

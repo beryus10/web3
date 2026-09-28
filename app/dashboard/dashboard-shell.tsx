@@ -1,6 +1,17 @@
 "use client";
 
 import Link from "next/link";
+import {
+  ArrowDownToLine,
+  ArrowUpFromLine,
+  ChartNoAxesCombined,
+  Clock3,
+  House,
+  LogOut,
+  MessageCircle,
+  UserRound,
+  type LucideIcon,
+} from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { createClient } from "@/lib/supabase/client";
@@ -8,7 +19,7 @@ import { useDashboardProfileContext } from "./dashboard-context";
 import { LanguageSelector } from "./language-selector";
 import { BrandMark } from "../brand-mark";
 
-export type DashboardNav = "dashboard" | "fund" | "withdraw" | "history" | "profile" | "support";
+export type DashboardNav = "dashboard" | "plans" | "fund" | "withdraw" | "history" | "profile" | "support";
 
 const supabase = createClient();
 
@@ -16,18 +27,42 @@ export function useDashboardProfile() {
   return useDashboardProfileContext().profile;
 }
 
-const navigation: { id: DashboardNav; label: string; href: string; icon: string }[] = [
-  { id: "dashboard", label: "Home", href: "/dashboard", icon: "⌂" },
-  { id: "fund", label: "Deposit", href: "/dashboard/fund", icon: "+" },
-  { id: "withdraw", label: "Withdraw", href: "/dashboard/withdraw", icon: "↓" },
-  { id: "history", label: "History", href: "/dashboard/history", icon: "↶" },
-  { id: "profile", label: "Profile", href: "/dashboard/profile", icon: "●" },
-  { id: "support", label: "Support", href: "/dashboard/support", icon: "?" },
+type DashboardIconName = "home" | "plans" | "deposit" | "withdraw" | "history" | "profile" | "support";
+
+const navigation: { id: DashboardNav; label: string; href: string; icon: DashboardIconName }[] = [
+  { id: "dashboard", label: "Home", href: "/dashboard", icon: "home" },
+  { id: "plans", label: "Investment Plans", href: "/dashboard/plans", icon: "plans" },
+  { id: "fund", label: "Deposit", href: "/dashboard/fund", icon: "deposit" },
+  { id: "withdraw", label: "Withdraw", href: "/dashboard/withdraw", icon: "withdraw" },
+  { id: "history", label: "History", href: "/dashboard/history", icon: "history" },
+  { id: "profile", label: "Profile", href: "/dashboard/profile", icon: "profile" },
+  { id: "support", label: "Support", href: "/dashboard/support", icon: "support" },
 ];
 
-const bottomNavigation = ["fund", "withdraw", "dashboard", "profile", "support"] as const;
+const bottomNavigation = [
+  { id: "send", label: "Send", href: "/dashboard/withdraw", icon: "withdraw" },
+  { id: "fund", label: "Deposit", href: "/dashboard/fund", icon: "deposit" },
+  { id: "dashboard", label: "Home", href: "/dashboard", icon: "home" },
+  { id: "profile", label: "Profile", href: "/dashboard/profile", icon: "profile" },
+  { id: "support", label: "Support", href: "/dashboard/support", icon: "support" },
+] as const;
 
 import { DashboardChatBox } from "./components/DashboardChatBox";
+
+const dashboardIcons: Record<DashboardIconName, LucideIcon> = {
+  home: House,
+  plans: ChartNoAxesCombined,
+  deposit: ArrowDownToLine,
+  withdraw: ArrowUpFromLine,
+  history: Clock3,
+  profile: UserRound,
+  support: MessageCircle,
+};
+
+export function DashboardIcon({ name }: { name: DashboardIconName }) {
+  const Icon = dashboardIcons[name];
+  return <Icon aria-hidden="true" size={20} strokeWidth={1.8} />;
+}
 
 export function DashboardShell({ active, children }: { active: DashboardNav; children: React.ReactNode }) {
   const profile = useDashboardProfile();
@@ -66,9 +101,9 @@ export function DashboardShell({ active, children }: { active: DashboardNav; chi
         </div>
         <div className="dashboard-account"><span className="dashboard-avatar">{initials}</span><span><b>{profile?.full_name || "Your account"}</b><small>{profile?.email || "Loading profile..."}</small></span></div>
         <nav className="dashboard-sidebar-nav" aria-label="Dashboard navigation">
-          {navigation.map((item) => <Link aria-current={active === item.id ? "page" : undefined} className={active === item.id ? "active" : ""} href={item.href} key={item.id} onClick={() => setDrawerOpen(false)}><span>{item.icon}</span>{item.label}</Link>)}
+          {navigation.map((item) => <Link aria-current={active === item.id ? "page" : undefined} className={active === item.id ? "active" : ""} href={item.href} key={item.id} onClick={() => setDrawerOpen(false)}><span><DashboardIcon name={item.icon} /></span>{item.label}</Link>)}
         </nav>
-        <button className="dashboard-logout" onClick={async () => { await supabase.auth.signOut(); router.push("/login"); }} type="button"><span>↪</span>Log out</button>
+        <button className="dashboard-logout" onClick={async () => { await supabase.auth.signOut(); router.push("/login"); }} type="button"><span><LogOut aria-hidden="true" size={18} /></span>Log out</button>
       </aside>
       <header className="dashboard-topbar">
         <div className="dashboard-topbar-start">
@@ -89,21 +124,21 @@ export function DashboardShell({ active, children }: { active: DashboardNav; chi
         {children}
       </section>
       <nav className="dashboard-mobile-dock" aria-label="Dashboard navigation">
-        {bottomNavigation.map((id) => {
-          const item = navigation.find((entry) => entry.id === id)!;
+        {bottomNavigation.map((item) => {
           const isHome = item.id === "dashboard";
           const isProfile = item.id === "profile";
+          const isActive = item.id === "send" ? active === "withdraw" : active === item.id;
           return (
             <Link
-              aria-current={active === item.id ? "page" : undefined}
-              className={`${active === item.id ? "active" : ""} ${isHome ? "home" : ""} ${isProfile ? "dock-profile" : ""}`}
+              aria-current={isActive ? "page" : undefined}
+              className={`${isActive ? "active" : ""} ${isHome ? "home" : ""} ${isProfile ? "dock-profile" : ""}`}
               href={item.href}
               key={item.id}
             >
               {isProfile ? (
                 <span className="dashboard-dock-avatar-circle" aria-hidden="true">{firstLetter}</span>
               ) : (
-                <span className="dashboard-dock-icon">{item.icon}</span>
+                <span className="dashboard-dock-icon"><DashboardIcon name={item.icon} /></span>
               )}
               <small>{item.label}</small>
             </Link>

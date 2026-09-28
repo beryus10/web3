@@ -51,7 +51,7 @@ function LoginContent() {
     }
 
     if (isSignup && !result.data.session) {
-      setMessage("Check your email to confirm your account, then log in.");
+      setMessage("Account created successfully. Please log in to continue.");
       return;
     }
 

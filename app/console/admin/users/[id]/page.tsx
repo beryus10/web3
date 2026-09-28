@@ -14,7 +14,7 @@ export default async function AdminUserPage({ params }: UserPageProps) {
   const { id } = await params;
   const supabase = await requireAdmin();
   const [{ data: user }, { data: deposits }, { data: withdrawals }, { data: transactions }] = await Promise.all([
-    supabase.from("profiles").select("id, email, full_name, role, balance, active_investment, total_earnings, phone, created_at").eq("id", id).eq("role", "user").single(),
+    supabase.from("profiles").select("id, email, full_name, role, balance, active_investment, profit_today, phone, created_at").eq("id", id).eq("role", "user").single(),
     supabase.from("deposit_requests").select("id, amount, network, status, created_at").eq("user_id", id).order("created_at", { ascending: false }),
     supabase.from("withdrawal_requests").select("id, amount, network, currency, recipient_address, status, created_at").eq("user_id", id).order("created_at", { ascending: false }),
     supabase.from("balance_transactions").select("id, amount, status, description, created_at").eq("user_id", id).order("created_at", { ascending: false }),
@@ -28,7 +28,7 @@ export default async function AdminUserPage({ params }: UserPageProps) {
         <article className="admin-panel admin-profile-card">
           <p className="dashboard-kicker">Account summary</p>
           <div className="admin-detail-balance"><span>Current balance</span><strong>${Number(user.balance).toLocaleString("en-US", { minimumFractionDigits: 2 })}</strong></div>
-          <dl><div><dt>Phone</dt><dd>{user.phone || "Not provided"}</dd></div><div><dt>Active investment</dt><dd>${Number(user.active_investment).toLocaleString("en-US", { minimumFractionDigits: 2 })}</dd></div><div><dt>Total earnings</dt><dd>${Number(user.total_earnings).toLocaleString("en-US", { minimumFractionDigits: 2 })}</dd></div><div><dt>Joined</dt><dd>{new Date(user.created_at).toLocaleDateString()}</dd></div></dl>
+          <dl><div><dt>Phone</dt><dd>{user.phone || "Not provided"}</dd></div><div><dt>Active investment</dt><dd>${Number(user.active_investment).toLocaleString("en-US", { minimumFractionDigits: 2 })}</dd></div><div><dt>Profit Today</dt><dd>${Number(user.profit_today).toLocaleString("en-US", { minimumFractionDigits: 2 })}</dd></div><div><dt>Joined</dt><dd>{new Date(user.created_at).toLocaleDateString()}</dd></div></dl>
         </article>
         <article className="admin-panel">
           <div className="admin-panel-heading"><h2>Edit account amounts</h2></div>
@@ -36,6 +36,7 @@ export default async function AdminUserPage({ params }: UserPageProps) {
             <input name="user_id" type="hidden" value={user.id} />
             <label>Account balance (USD)<input defaultValue={Number(user.balance).toFixed(2)} min="0" name="balance" required step="0.01" type="number" /></label>
             <label>Active investment (USD)<input defaultValue={Number(user.active_investment).toFixed(2)} min="0" name="active_investment" required step="0.01" type="number" /></label>
+            <label>Profit Today (USD)<input defaultValue={Number(user.profit_today).toFixed(2)} min="0" name="profit_today" required step="0.01" type="number" /></label>
             <button className="admin-primary-button" type="submit">Save account amounts</button>
           </form>
           <details className="admin-adjust-details"><summary>Record a balance adjustment</summary><form action={adjustUserBalance} className="admin-detail-form"><input name="user_id" type="hidden" value={user.id} /><label>Amount change<input name="amount_delta" placeholder="+ / - amount" required step="0.01" type="number" /></label><label>Note<input name="note" placeholder="Reason for adjustment" type="text" /></label><button className="admin-secondary-button" type="submit">Apply adjustment</button></form></details>

@@ -26,7 +26,7 @@ function profileFromAuth(user: {
     role: "user",
     balance: 0,
     active_investment: 0,
-    total_earnings: 0,
+    profit_today: 0,
     created_at: user.created_at,
   };
 }

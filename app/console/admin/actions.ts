@@ -51,14 +51,15 @@ export async function updateUserFinancials(formData: FormData) {
   const userId = String(formData.get("user_id") || "");
   const balance = Number(formData.get("balance"));
   const activeInvestment = Number(formData.get("active_investment"));
+  const profitToday = Number(formData.get("profit_today"));
 
-  if (!userId || !Number.isFinite(balance) || balance < 0 || !Number.isFinite(activeInvestment) || activeInvestment < 0) {
-    throw new Error("Enter valid non-negative balance and investment values");
+  if (!userId || !Number.isFinite(balance) || balance < 0 || !Number.isFinite(activeInvestment) || activeInvestment < 0 || !Number.isFinite(profitToday) || profitToday < 0) {
+    throw new Error("Enter valid non-negative balance, investment, and profit values");
   }
 
   const { error } = await supabase
     .from("profiles")
-    .update({ balance, active_investment: activeInvestment })
+    .update({ balance, active_investment: activeInvestment, profit_today: profitToday })
     .eq("id", userId)
     .eq("role", "user");
   if (error) throw new Error(error.message);

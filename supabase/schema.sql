@@ -13,7 +13,7 @@ create table public.profiles (
   role public.user_role not null default 'user',
   balance numeric(18, 2) not null default 0 check (balance >= 0),
   active_investment numeric(18, 2) not null default 0 check (active_investment >= 0),
-  total_earnings numeric(18, 2) not null default 0,
+  profit_today numeric(18, 2) not null default 0,
   created_at timestamptz not null default now()
 );
 

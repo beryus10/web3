@@ -8,8 +8,8 @@ import { MarketChart } from "./market-chart";
 export default function DashboardPage() {
   const profile = useDashboardProfile();
   const activeInvestment = profile?.active_investment ?? 0;
-  const totalEarnings = profile?.total_earnings ?? 0;
-  const totalFunds = activeInvestment + totalEarnings;
+  const profitToday = profile?.profit_today ?? 0;
+  const totalFunds = profile?.balance ?? 0;
   const [inviteCopied, setInviteCopied] = useState(false);
 
   const inviteUrl = typeof window !== "undefined" && profile
@@ -37,7 +37,7 @@ export default function DashboardPage() {
         <article>
           <span>Total funds</span>
           <strong>${totalFunds.toLocaleString("en-US", { minimumFractionDigits: 2 })}</strong>
-          <small>Investment + earnings</small>
+          <small>Available account balance</small>
         </article>
         <article>
           <span>Active investment</span>
@@ -45,9 +45,8 @@ export default function DashboardPage() {
           <small>Current allocation</small>
         </article>
         <article>
-          <span>Total earnings</span>
-          <strong>${totalEarnings.toLocaleString("en-US", { minimumFractionDigits: 2 })}</strong>
-          <small>Recorded earnings</small>
+          <span>Profit Today</span>
+          <strong>${profitToday.toLocaleString("en-US", { minimumFractionDigits: 2 })}</strong>
         </article>
       </div>
 

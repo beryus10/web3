@@ -9,7 +9,7 @@ export type Profile = {
   role: UserRole;
   balance: number;
   active_investment: number;
-  total_earnings: number;
+  profit_today: number;
   created_at: string;
 };
 

@@ -119,12 +119,12 @@
     justify-content: flex-start;
   }
 
-  .actions > a:first-child {
-    display: none;
-  }
-
   .getStarted {
     font-size: 11px;
     padding: 10px 14px;
   }
+}
+
+:global(.lv-nav-menu) :global(.lv-nav-actions) > .drawerLogin {
+  display: inline-flex;
 }

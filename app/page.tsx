@@ -5,6 +5,7 @@ import { useEffect, useState } from "react";
 import { BrandMark } from "./brand-mark";
 import { TeamSection } from "./components/team-section";
 import { SiteFooter } from "./components/site-footer";
+import navStyles from "./components/site-header.module.css";
 import { faqItems } from "./faq-content";
 import { investmentPlans } from "./plan-content";
 
@@ -124,7 +125,7 @@ export default function Home() {
                 </Link>
               </div>
               <div className="lv-nav-actions">
-                <Link href="/login" onClick={() => setIsNavOpen(false)}>
+                <Link className={navStyles.drawerLogin} href="/login" onClick={() => setIsNavOpen(false)}>
                   Login
                 </Link>
                 <Link

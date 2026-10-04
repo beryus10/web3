@@ -4,6 +4,7 @@ import { FormEvent, Suspense, useState } from "react";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
+import { Eye, EyeOff } from "lucide-react";
 
 function sanitizeInvitedBy(value: string | null) {
   if (!value) return null;
@@ -18,6 +19,7 @@ function LoginContent() {
   const [error, setError] = useState("");
   const [message, setMessage] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
   const router = useRouter();
   const searchParams = useSearchParams();
   const supabase = createClient();
@@ -150,16 +152,39 @@ function LoginContent() {
             <label className="field-label" htmlFor="password">
               Password
             </label>
-            <input
-              className="auth-input"
-              id="password"
-              minLength={8}
-              onChange={(event) => setPassword(event.target.value)}
-              placeholder="8+ characters"
-              required
-              type="password"
-              value={password}
-            />
+            <div style={{ position: "relative" }}>
+              <input
+                className="auth-input"
+                id="password"
+                minLength={8}
+                onChange={(event) => setPassword(event.target.value)}
+                placeholder="8+ characters"
+                required
+                type={showPassword ? "text" : "password"}
+                value={password}
+              />
+              <button
+                type="button"
+                onClick={() => setShowPassword(!showPassword)}
+                style={{
+                  position: "absolute",
+                  right: "12px",
+                  top: "50%",
+                  transform: "translateY(-50%)",
+                  background: "none",
+                  border: "none",
+                  cursor: "pointer",
+                  color: "#666",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  padding: "0",
+                }}
+                aria-label={showPassword ? "Hide password" : "Show password"}
+              >
+                {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+              </button>
+            </div>
             {error && <p className="auth-error" role="alert">{error}</p>}
             {message && <p className="auth-message" role="status">{message}</p>}
             <button className="auth-submit" disabled={isSubmitting} type="submit">

@@ -82,6 +82,18 @@ export async function approveDeposit(formData: FormData) {
   revalidatePath("/dashboard");
 }
 
+export async function rejectDeposit(formData: FormData) {
+  const supabase = await requireAdmin();
+  const requestId = String(formData.get("request_id") || "");
+  if (!requestId) throw new Error("Deposit request is required");
+
+  const { error } = await supabase.rpc("reject_deposit", { request_id: requestId });
+  if (error) throw new Error(error.message);
+
+  revalidatePath("/console/admin");
+  revalidatePath("/dashboard");
+}
+
 export async function reviewWithdrawal(formData: FormData) {
   const supabase = await requireAdmin();
   const requestId = String(formData.get("request_id") || "");

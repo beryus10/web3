@@ -79,6 +79,7 @@ export async function approveDeposit(formData: FormData) {
   if (error) throw new Error(error.message);
 
   revalidatePath("/console/admin");
+  revalidatePath("/console/admin/deposits");
   revalidatePath("/dashboard");
 }
 
@@ -88,9 +89,21 @@ export async function rejectDeposit(formData: FormData) {
   if (!requestId) throw new Error("Deposit request is required");
 
   const { error } = await supabase.rpc("reject_deposit", { request_id: requestId });
-  if (error) throw new Error(error.message);
+  if (error) {
+    // If the reject_deposit RPC function has not been created yet in the database, update directly
+    const { error: directError } = await supabase
+      .from("deposit_requests")
+      .update({ status: "rejected", reviewed_at: new Date().toISOString() })
+      .eq("id", requestId)
+      .eq("status", "pending");
+
+    if (directError) {
+      throw new Error(directError.message || error.message);
+    }
+  }
 
   revalidatePath("/console/admin");
+  revalidatePath("/console/admin/deposits");
   revalidatePath("/dashboard");
 }
 

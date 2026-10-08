@@ -92,6 +92,10 @@ export type Database = {
         Args: { request_id: string };
         Returns: void;
       };
+      reject_deposit: {
+        Args: { request_id: string };
+        Returns: void;
+      };
       review_withdrawal: {
         Args: { request_id: string; decision: "approved" | "rejected" };
         Returns: void;

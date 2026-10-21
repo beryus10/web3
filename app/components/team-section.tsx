@@ -2,7 +2,7 @@ import Image from "next/image";
 
 const teamMembers = [
   {
-    name: "James Wilson",
+    name: "Brian Jordan Ellis",
     role: "CEO & Founder",
     image: "/images/ceo.jpeg",
   },
